@@ -1,85 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Impresión 3D</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<style>
-  .calc-wrap { max-width: 420px; margin: 0 auto; padding: 1rem 0; }
-  .section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin: 1.5rem 0 0.5rem; }
-  .config-box { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.5rem; }
-  .config-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
-  .config-row:last-child { border-bottom: none; }
-  .config-label { font-size: 13px; color: var(--color-text-secondary); flex: 1; }
-  .config-input { width: 90px; text-align: right; font-size: 13px; padding: 4px 8px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
-  .input-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
-  .input-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
-  .input-row:last-child { border-bottom: none; }
-  .input-label { font-size: 14px; color: var(--color-text-primary); flex: 1; }
-  .main-input { width: 80px; font-size: 16px; font-weight: 500; padding: 6px 10px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-primary); text-align: right; }
-  .unit-label { font-size: 12px; color: var(--color-text-secondary); min-width: 28px; }
-  .results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem; }
-  .result-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; }
-  .result-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; }
-  .result-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
-  .result-total { grid-column: 1 / -1; background: var(--color-background-info); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; }
-  .result-total .result-label { color: var(--color-text-info); font-size: 12px; font-weight: 500; }
-  .result-total .result-value { color: var(--color-text-info); font-size: 24px; }
-  .toggle-config { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 14px; font-size: 12px; color: var(--color-text-secondary); cursor: pointer; margin-bottom: 0.5rem; }
-  .toggle-config:hover { background: var(--color-background-secondary); }
-  .breakdown { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; margin-top: 0.5rem; }
-  .brow { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text-secondary); padding: 2px 0; }
-  .brow.sep { border-top: 0.5px solid var(--color-border-tertiary); margin-top: 4px; padding-top: 6px; color: var(--color-text-primary); font-size: 13px; }
-</style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 1rem;
+    }
 
+    h1 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+
+    .subtitle { font-size: 13px; color: #666; margin-bottom: 1.5rem; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    /* ===== VALORES FIJOS ===== */
+    .config-box {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e5e5e5;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .config-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 7px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .config-row:last-child { border-bottom: none; }
+
+    .config-label { font-size: 13px; color: #555; flex: 1; }
+
+    .config-input {
+      width: 100px;
+      text-align: right;
+      font-size: 13px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fafafa;
+      color: #1a1a1a;
+    }
+
+    /* fila destacada ganancia */
+    .config-row-highlight {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px;
+      border-bottom: 1px solid #f0f0f0;
+      background: #fffbea;
+      border-radius: 8px;
+      margin: 4px 0;
+    }
+
+    .config-row-highlight .config-label { color: #92600a; font-weight: 600; }
+
+    /* ===== INPUTS PRINCIPALES ===== */
+    .input-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .input-row:last-child { border-bottom: none; }
+
+    .input-label { font-size: 15px; color: #1a1a1a; flex: 1; }
+
+    .main-input {
+      width: 85px;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #f5f5f5;
+      color: #1a1a1a;
+      text-align: right;
+    }
+
+    .unit-label { font-size: 13px; color: #888; min-width: 30px; }
+
+    /* ===== RESULTADOS ===== */
+    .results {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+
+    .result-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+    }
+
+    .result-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .result-value { font-size: 20px; font-weight: 600; color: #1a1a1a; }
+
+    .result-total {
+      grid-column: 1 / -1;
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .result-total .result-label { color: #aaa; font-size: 13px; margin: 0; }
+    .result-total .result-value { color: #fff; font-size: 26px; }
+
+    /* ===== DESGLOSE ===== */
+    .breakdown {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
+    }
+
+    .brow { display: flex; justify-content: space-between; font-size: 13px; color: #666; padding: 3px 0; }
+
+    .brow.sep {
+      border-top: 1px solid #f0f0f0;
+      margin-top: 6px;
+      padding-top: 8px;
+      color: #1a1a1a;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .brow.ganancia { color: #92600a; font-weight: 500; }
+
+    /* ===== BOTÓN CONFIG ===== */
+    .toggle-config {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 13px;
+      color: #666;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+    }
+
+    .toggle-config:active { background: #f0f0f0; }
+
+    .calc-wrap { max-width: 420px; margin: 0 auto; }
+
+    .footer-note { font-size: 11px; color: #aaa; text-align: center; margin-top: 2rem; padding-bottom: 1rem; }
+  </style>
+</head>
+<body>
 <div class="calc-wrap">
-  <button class="toggle-config" onclick="toggleConfig()">ajustar valores fijos</button>
 
+  <h1>Calculadora impresión 3D</h1>
+  <p class="subtitle">Ingresa el peso y el tiempo para calcular el precio</p>
+
+  <!-- ============================================================
+       BOTÓN PARA VER/OCULTAR VALORES FIJOS
+       ============================================================ -->
+  <button class="toggle-config" onclick="toggleConfig()">⚙ ajustar valores fijos</button>
+
+  <!-- ============================================================
+       VALORES FIJOS DEL NEGOCIO
+       Para cambiar algo: edita el número en value=""
+       ============================================================ -->
   <div id="config-section" style="display:none;">
     <p class="section-label">valores fijos del negocio</p>
     <div class="config-box">
+
       <div class="config-row">
         <span class="config-label">Precio rollo ($)</span>
         <input class="config-input" id="cfg-rollo-precio" type="number" value="21591" oninput="calcular()">
       </div>
+
       <div class="config-row">
         <span class="config-label">Peso rollo (g)</span>
         <input class="config-input" id="cfg-rollo-peso" type="number" value="1000" oninput="calcular()">
       </div>
+
       <div class="config-row">
         <span class="config-label">Precio máquina ($/hr)</span>
         <input class="config-input" id="cfg-maquina" type="number" value="1500" oninput="calcular()">
       </div>
+
       <div class="config-row">
-        <span class="config-label">Margen material (%)</span>
+        <span class="config-label">% extra material</span>
         <input class="config-input" id="cfg-margen" type="number" value="15" oninput="calcular()">
       </div>
+
+      <!-- GANANCIA — campo destacado en amarillo -->
+      <div class="config-row-highlight">
+        <span class="config-label">% ganancia total</span>
+        <input class="config-input" id="cfg-ganancia" type="number" value="0" oninput="calcular()">
+      </div>
+
       <div class="config-row">
         <span class="config-label">IVA (%)</span>
         <input class="config-input" id="cfg-iva" type="number" value="19" oninput="calcular()">
       </div>
+
     </div>
   </div>
 
+  <!-- ============================================================
+       INPUTS QUE CAMBIAN EN CADA PEDIDO
+       ============================================================ -->
   <p class="section-label">datos de la pieza</p>
   <div class="input-card">
+
     <div class="input-row">
       <span class="input-label">Peso de la pieza</span>
       <input class="main-input" id="peso" type="number" value="57" min="0" oninput="calcular()">
       <span class="unit-label">g</span>
     </div>
+
     <div class="input-row">
       <span class="input-label">Horas de impresión</span>
       <input class="main-input" id="horas" type="number" value="1" min="0" oninput="calcular()">
       <span class="unit-label">hrs</span>
     </div>
+
     <div class="input-row">
       <span class="input-label">Minutos adicionales</span>
-      <input class="main-input" id="minutos" type="number" value="0" min="0" max="59" oninput="calcular()">
+      <input class="main-input" id="minutos" type="number" value="9" min="0" max="59" oninput="calcular()">
       <span class="unit-label">min</span>
     </div>
+
     <div class="input-row">
       <span class="input-label">Cantidad</span>
       <input class="main-input" id="cantidad" type="number" value="1" min="1" oninput="calcular()">
       <span class="unit-label">uds</span>
     </div>
+
   </div>
 
+  <!-- ============================================================
+       RESULTADOS
+       ============================================================ -->
   <div class="results">
     <div class="result-card">
       <div class="result-label">costo material</div>
@@ -98,63 +288,93 @@
       <div class="result-value" id="r-iva">$0</div>
     </div>
     <div class="result-total">
-      <div class="result-label">precio total (cantidad)</div>
+      <div class="result-label">precio total</div>
       <div class="result-value" id="r-total">$0</div>
     </div>
   </div>
 
+  <!-- ============================================================
+       DESGLOSE PASO A PASO
+       ============================================================ -->
   <div class="breakdown" id="breakdown"></div>
+
+  <p class="footer-note">calculadora · francisco yañez</p>
+
 </div>
 
+<!-- ============================================================
+     LÓGICA DE CÁLCULO (las "fórmulas" del Excel)
+
+     FÓRMULAS:
+     precio por gramo       = precio rollo ÷ peso rollo
+     costo material         = peso pieza × precio por gramo
+     costo material + extra = costo material × (1 + % extra / 100)
+     costo máquina          = horas totales × precio máquina/hr
+     subtotal               = costo material + extra + costo máquina
+     con ganancia           = subtotal × (1 + % ganancia / 100)
+     precio con IVA         = con ganancia × (1 + IVA / 100)
+     precio total           = precio con IVA × cantidad
+     ============================================================ -->
 <script>
-function toggleConfig() {
-  var s = document.getElementById('config-section');
-  s.style.display = s.style.display === 'none' ? 'block' : 'none';
-}
+  function toggleConfig() {
+    var s = document.getElementById('config-section');
+    s.style.display = s.style.display === 'none' ? 'block' : 'none';
+  }
 
-function fmt(n) {
-  return '$' + Math.round(n).toLocaleString('es-CL');
-}
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('es-CL');
+  }
 
-function calcular() {
-  var rolloPrecio = parseFloat(document.getElementById('cfg-rollo-precio').value) || 0;
-  var rolloPeso   = parseFloat(document.getElementById('cfg-rollo-peso').value) || 1;
-  var maquina     = parseFloat(document.getElementById('cfg-maquina').value) || 0;
-  var margen      = parseFloat(document.getElementById('cfg-margen').value) / 100 || 0;
-  var iva         = parseFloat(document.getElementById('cfg-iva').value) / 100 || 0;
+  function calcular() {
+    var rolloPrecio = parseFloat(document.getElementById('cfg-rollo-precio').value) || 0;
+    var rolloPeso   = parseFloat(document.getElementById('cfg-rollo-peso').value) || 1;
+    var maquina     = parseFloat(document.getElementById('cfg-maquina').value) || 0;
+    var margen      = parseFloat(document.getElementById('cfg-margen').value) / 100 || 0;
+    var ganancia    = parseFloat(document.getElementById('cfg-ganancia').value) / 100 || 0;
+    var iva         = parseFloat(document.getElementById('cfg-iva').value) / 100 || 0;
 
-  var peso     = parseFloat(document.getElementById('peso').value) || 0;
-  var horas    = parseFloat(document.getElementById('horas').value) || 0;
-  var minutos  = parseFloat(document.getElementById('minutos').value) || 0;
-  var cantidad = parseFloat(document.getElementById('cantidad').value) || 1;
+    var peso     = parseFloat(document.getElementById('peso').value) || 0;
+    var horas    = parseFloat(document.getElementById('horas').value) || 0;
+    var minutos  = parseFloat(document.getElementById('minutos').value) || 0;
+    var cantidad = parseFloat(document.getElementById('cantidad').value) || 1;
 
-  var precioGramo = rolloPrecio / rolloPeso;
-  var costoMat    = peso * precioGramo;
-  var costoMatConMargen = costoMat * (1 + margen);
+    var precioGramo       = rolloPrecio / rolloPeso;
+    var costoMat          = peso * precioGramo;
+    var costoMatConMargen = costoMat * (1 + margen);
+    var tiempoHrs         = horas + minutos / 60;
+    var costoMaq          = tiempoHrs * maquina;
+    var subtotal          = costoMatConMargen + costoMaq;
+    var conGanancia       = subtotal * (1 + ganancia);
+    var precioConIva      = conGanancia * (1 + iva);
+    var precioTotal       = precioConIva * cantidad;
 
-  var tiempoHrs   = horas + minutos / 60;
-  var costoMaq    = tiempoHrs * maquina;
+    document.getElementById('r-mat').textContent   = fmt(costoMatConMargen);
+    document.getElementById('r-maq').textContent   = fmt(costoMaq);
+    document.getElementById('r-neto').textContent  = fmt(conGanancia);
+    document.getElementById('r-iva').textContent   = fmt(precioConIva);
+    document.getElementById('r-total').textContent = fmt(precioTotal);
 
-  var precioNeto  = costoMatConMargen + costoMaq;
-  var precioConIva = precioNeto * (1 + iva);
-  var precioTotal  = precioConIva * cantidad;
+    var d =
+      '<div class="brow"><span>precio por gramo</span><span>' + fmt(precioGramo) + '</span></div>' +
+      '<div class="brow"><span>material bruto (' + peso + 'g)</span><span>' + fmt(costoMat) + '</span></div>' +
+      '<div class="brow"><span>material + extra ' + Math.round(margen*100) + '%</span><span>' + fmt(costoMatConMargen) + '</span></div>' +
+      '<div class="brow"><span>máquina (' + tiempoHrs.toFixed(2) + ' hrs)</span><span>' + fmt(costoMaq) + '</span></div>' +
+      '<div class="brow sep"><span>subtotal costos</span><span>' + fmt(subtotal) + '</span></div>';
 
-  document.getElementById('r-mat').textContent  = fmt(costoMatConMargen);
-  document.getElementById('r-maq').textContent  = fmt(costoMaq);
-  document.getElementById('r-neto').textContent = fmt(precioNeto);
-  document.getElementById('r-iva').textContent  = fmt(precioConIva);
-  document.getElementById('r-total').textContent = fmt(precioTotal);
+    if (ganancia > 0) {
+      d += '<div class="brow ganancia"><span>ganancia ' + Math.round(ganancia*100) + '%</span><span>+ ' + fmt(conGanancia - subtotal) + '</span></div>';
+      d += '<div class="brow sep"><span>precio sin IVA</span><span>' + fmt(conGanancia) + '</span></div>';
+    }
 
-  document.getElementById('breakdown').innerHTML =
-    '<div class="brow"><span>costo por gramo</span><span>' + fmt(precioGramo) + '</span></div>' +
-    '<div class="brow"><span>material bruto (' + peso + 'g)</span><span>' + fmt(costoMat) + '</span></div>' +
-    '<div class="brow"><span>material + margen ' + Math.round(margen*100) + '%</span><span>' + fmt(costoMatConMargen) + '</span></div>' +
-    '<div class="brow"><span>máquina (' + tiempoHrs.toFixed(2) + ' hrs)</span><span>' + fmt(costoMaq) + '</span></div>' +
-    '<div class="brow sep"><span>subtotal sin IVA</span><span>' + fmt(precioNeto) + '</span></div>' +
-    '<div class="brow"><span>IVA ' + Math.round(iva*100) + '%</span><span>' + fmt(precioConIva - precioNeto) + '</span></div>' +
-    '<div class="brow sep"><span>precio unitario con IVA</span><span>' + fmt(precioConIva) + '</span></div>' +
-    (cantidad > 1 ? '<div class="brow sep"><span>total x' + cantidad + '</span><span>' + fmt(precioTotal) + '</span></div>' : '');
-}
+    d +=
+      '<div class="brow"><span>IVA ' + Math.round(iva*100) + '%</span><span>+ ' + fmt(precioConIva - conGanancia) + '</span></div>' +
+      '<div class="brow sep"><span>precio unitario con IVA</span><span>' + fmt(precioConIva) + '</span></div>' +
+      (cantidad > 1 ? '<div class="brow sep"><span>total x' + cantidad + ' unidades</span><span>' + fmt(precioTotal) + '</span></div>' : '');
 
-calcular();
+    document.getElementById('breakdown').innerHTML = d;
+  }
+
+  calcular();
 </script>
+</body>
+</html>
